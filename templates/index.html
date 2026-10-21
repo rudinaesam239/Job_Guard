@@ -1,0 +1,227 @@
+<!doctype html><html lang="ar" dir="rtl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>JobGuard – كاشف إعلانات الوظائف المزيفة</title>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;900&display=swap" rel="stylesheet">
+<style>
+:root{color-scheme:dark;--bg:#070a18;--ink:#eef1ff;--mut:#9aa3c7;--line:rgba(255,255,255,.12);--glass:rgba(255,255,255,.06);--bad:#ff3d81;--ok:#2ef2b0;--warn:#ffc83d;--acc:#8b5cff;--acc2:#27d3ff}
+*{box-sizing:border-box}body{margin:0;font:16px/1.7 Cairo,"Segoe UI",Tahoma,sans-serif;background:var(--bg);color:var(--ink);overflow-x:hidden;min-height:100vh}
+.orb{position:fixed;border-radius:50%;filter:blur(90px);opacity:.38;z-index:-1;animation:fl 18s ease-in-out infinite alternate}
+.o1{width:480px;height:480px;background:var(--acc);top:-120px;right:-100px}.o2{width:420px;height:420px;background:var(--bad);bottom:-120px;left:-80px;animation-delay:-6s}.o3{width:320px;height:320px;background:var(--acc2);top:45%;left:35%;opacity:.2;animation-delay:-11s}
+@keyframes fl{to{transform:translate(60px,-50px) scale(1.15)}}
+body:before{content:"";position:fixed;inset:0;z-index:-1;background-image:linear-gradient(var(--line) 1px,transparent 1px),linear-gradient(90deg,var(--line) 1px,transparent 1px);background-size:48px 48px;opacity:.25;mask-image:radial-gradient(circle at 50% 30%,#000,transparent 75%)}
+header{max-width:980px;margin:auto;padding:34px 20px 6px;display:flex;align-items:center;gap:26px;flex-wrap:wrap}
+.radar{width:132px;height:132px;border-radius:50%;position:relative;flex:none;border:2px solid rgba(46,242,176,.5);background:radial-gradient(circle,transparent 30%,rgba(46,242,176,.12) 31%,transparent 32%,transparent 60%,rgba(46,242,176,.12) 61%,transparent 62%),rgba(46,242,176,.05);box-shadow:0 0 40px rgba(46,242,176,.25)}
+.radar:before{content:"";position:absolute;inset:0;border-radius:50%;background:conic-gradient(from 0deg,rgba(46,242,176,.6),transparent 28%);animation:sp 3s linear infinite}
+.radar b{position:absolute;width:9px;height:9px;border-radius:50%;background:var(--bad);box-shadow:0 0 12px var(--bad);animation:bl 3s infinite}
+@keyframes sp{to{transform:rotate(360deg)}}@keyframes bl{0%,100%{opacity:.2;transform:scale(.6)}50%{opacity:1;transform:scale(1.3)}}
+h1{margin:0;font:900 3rem/1.1 Cairo;letter-spacing:-1px;background:linear-gradient(90deg,var(--ok),var(--acc2),var(--acc),var(--bad));-webkit-background-clip:text;background-clip:text;color:transparent;background-size:200%;animation:gs 6s linear infinite}
+@keyframes gs{to{background-position:200%}}
+header p{color:var(--mut);margin:6px 0 0;max-width:52ch}
+nav{max-width:980px;margin:18px auto 0;padding:0 20px;display:flex;gap:8px;flex-wrap:wrap}
+nav button{background:var(--glass);border:1px solid var(--line);color:var(--mut);font:600 .95rem Cairo;padding:8px 16px;border-radius:999px;cursor:pointer;transition:.25s}
+nav button:hover{color:var(--ink);transform:translateY(-2px)}nav button[aria-selected=true]{color:#06101c;background:linear-gradient(90deg,var(--ok),var(--acc2));border-color:transparent;box-shadow:0 0 22px rgba(39,211,255,.4)}
+main{max-width:980px;margin:0 auto;padding:6px 20px 70px}section{display:none}section.on{display:block;animation:pop .45s}
+@keyframes pop{from{opacity:0;transform:translateY(14px)}}
+.card{background:var(--glass);border:1px solid var(--line);border-radius:18px;padding:22px;margin-top:16px;backdrop-filter:blur(14px);box-shadow:0 10px 40px rgba(0,0,0,.35)}
+label{display:block;font-weight:600;margin:12px 0 4px}input[type=text],textarea,select{width:100%;font:inherit;padding:10px 12px;border:1px solid var(--line);border-radius:10px;background:rgba(0,0,0,.35);color:var(--ink);transition:.2s}
+input:focus,textarea:focus,select:focus{outline:0;border-color:var(--acc2);box-shadow:0 0 0 3px rgba(39,211,255,.25)}textarea{min-height:100px;resize:vertical}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:12px}.cols{display:grid;grid-template-columns:1fr 1fr;gap:20px}@media(max-width:700px){.row,.cols{grid-template-columns:1fr}h1{font-size:2.3rem}}
+.checks{display:flex;gap:18px;flex-wrap:wrap;margin-top:14px}.checks label{font-weight:400;margin:0;cursor:pointer}
+button.go{background:linear-gradient(90deg,var(--acc),var(--bad));color:#fff;border:0;border-radius:12px;font:900 1.05rem Cairo;padding:12px 28px;margin-top:18px;cursor:pointer;box-shadow:0 6px 28px rgba(139,92,255,.5);transition:.25s}
+button.go:hover{transform:translateY(-2px) scale(1.03)}button.go:disabled{opacity:.6;animation:pu 1s infinite}@keyframes pu{50%{opacity:.35}}:focus-visible{outline:3px solid var(--acc2);outline-offset:2px}
+.ex{background:var(--glass);border:1px solid var(--line);color:var(--ink);border-radius:10px;padding:6px 14px;margin:0 0 6px;margin-inline-end:8px;cursor:pointer;font:inherit;font-size:.9rem;transition:.2s}.ex:hover{border-color:var(--acc2)}
+.res{display:none}.top{display:flex;gap:24px;align-items:center;flex-wrap:wrap}
+.gauge{position:relative;width:250px;flex:none}.gauge svg{width:100%;display:block}.gauge path{fill:none;stroke-width:14;stroke-linecap:round}.trk{stroke:rgba(255,255,255,.1)}
+.arc{stroke-dasharray:100;stroke-dashoffset:100;transition:stroke-dashoffset 1.1s cubic-bezier(.2,.8,.2,1);filter:drop-shadow(0 0 6px rgba(255,255,255,.35))}
+.gauge b{position:absolute;inset:auto 0 6px;text-align:center;font:900 2.3rem Cairo}.gauge small{position:absolute;inset:auto 0 -14px;text-align:center;color:var(--mut);font-size:.8rem}
+.verdict{font:900 1.9rem Cairo}.verdict.bad{color:var(--bad);text-shadow:0 0 22px rgba(255,61,129,.6)}.verdict.ok{color:var(--ok);text-shadow:0 0 22px rgba(46,242,176,.5)}.verdict.warn{color:var(--warn)}
+.mut{color:var(--mut)}h2{font:900 1.5rem Cairo;margin:0 0 6px}h3{margin:20px 0 6px;font-weight:900}
+.chip{display:inline-block;padding:2px 12px;border-radius:999px;margin:3px 0;margin-inline-end:6px;font-size:.88rem;border:1px solid var(--line);background:rgba(0,0,0,.25)}.chip.r{border-color:var(--bad);color:#ff8fb3}.chip.g{border-color:var(--ok);color:var(--ok)}
+.err{color:var(--bad);margin-top:10px}ul{padding-inline-start:22px;margin:6px 0}
+.type{border:1px solid var(--bad);background:linear-gradient(135deg,rgba(255,61,129,.14),rgba(139,92,255,.1));border-radius:14px;padding:14px 16px;margin-top:10px}.type h4{margin:0;font:900 1.1rem Cairo;color:#ff8fb3}.type p{margin:4px 0;color:var(--mut)}.type strong{color:var(--warn)}
+.fb{margin-top:20px;padding-top:14px;border-top:1px dashed var(--line)}.fb button{background:var(--glass);border:1px solid var(--line);color:var(--ink);border-radius:10px;padding:6px 14px;margin:6px 0 0;margin-inline-end:8px;cursor:pointer;font:inherit}.fb button:hover{border-color:var(--warn)}
+.sw{display:flex;align-items:center;gap:10px;margin:0;font-weight:600;cursor:pointer;padding:8px 14px;border:1px solid var(--line);border-radius:12px;background:rgba(0,0,0,.25)}.sw input{display:none}.sw i{width:40px;height:22px;border-radius:11px;background:#333a5c;position:relative;transition:.25s;flex:none}.sw i:after{content:"";position:absolute;top:3px;inset-inline-start:3px;width:16px;height:16px;border-radius:50%;background:#fff;transition:.25s}.sw input:checked+i{background:var(--ok);box-shadow:0 0 14px var(--ok)}.sw input:checked+i:after{inset-inline-start:21px}
+.bar{height:10px;border-radius:5px;background:rgba(255,255,255,.1);overflow:hidden;margin:4px 0 12px}.bar i{display:block;height:100%;border-radius:5px;background:linear-gradient(90deg,var(--ok),var(--warn),var(--bad));transition:width .8s cubic-bezier(.2,.8,.2,1)}
+.insight{margin-top:14px;padding:14px 16px;border-radius:14px;border:1px solid var(--warn);background:rgba(255,200,61,.09)}
+td.SUSPICIOUS{color:var(--bad);font-weight:900}td.CAUTION{color:var(--warn);font-weight:600}td.LIKELY{color:var(--ok)}
+table{border-collapse:collapse;width:100%}td,th{border-bottom:1px solid var(--line);padding:7px;text-align:start}code{background:rgba(0,0,0,.4);padding:1px 6px;border-radius:5px}
+.lang{position:fixed;top:14px;inset-inline-end:14px;z-index:10;display:flex;gap:2px;padding:3px;border-radius:999px;background:rgba(7,10,24,.72);border:1px solid var(--line);backdrop-filter:blur(10px);direction:ltr}
+.lang button{font:700 .85rem Cairo;letter-spacing:.5px;padding:5px 13px;border-radius:999px;border:0;background:transparent;color:var(--mut);cursor:pointer;transition:.2s}
+.lang button:hover{color:var(--ink)}.lang button[aria-pressed=true]{color:#06101c;background:linear-gradient(90deg,var(--ok),var(--acc2));box-shadow:0 0 16px rgba(39,211,255,.35)}
+</style></head><body>
+<div class="lang" role="group" aria-label="Language"><button type="button" data-l="en" aria-pressed="false">EN</button><button type="button" data-l="ar" aria-pressed="true">AR</button></div>
+<div class="orb o1"></div><div class="orb o2"></div><div class="orb o3"></div>
+<header><div class="radar" aria-hidden="true"><b style="top:24%;right:30%"></b><b style="top:62%;right:62%;animation-delay:-1s"></b><b style="top:48%;right:16%;animation-delay:-2s"></b></div>
+<div><h1>JobGuard</h1><p data-i18n="hdr_sub">الصق إعلان الوظيفة، والرادار يكشفلك هل هو نصب، ونوع النصب، وتعمل إيه دلوقتي.</p></div></header>
+<nav role="tablist"><button role="tab" data-t="scan" aria-selected="true" data-i18n="t_scan">🔍 افحص إعلان</button><button role="tab" data-t="sim" data-i18n="t_sim">🧪 محاكي «ماذا لو»</button><button role="tab" data-t="csv" data-i18n="t_csv">📂 فحص ملف CSV</button><button role="tab" data-t="how" data-i18n="t_how">⚙️ إزاي بيشتغل</button><button role="tab" data-t="tips" data-i18n="t_tips">🚩 علامات النصب</button></nav>
+<main>
+<section id="scan" class="on"><div class="card"><button class="ex" data-ex="scam" data-i18n="ex_scam">🚨 مثال نصب (إنجليزي)</button><button class="ex" data-ex="eg" data-i18n="ex_eg">🇪🇬 مثال نصب مصري</button><button class="ex" data-ex="real" data-i18n="ex_real">✅ مثال سليم</button>
+<label for="title" data-i18n="l_title">المسمى الوظيفي</label><input type="text" id="title">
+<div class="row"><div><label for="location" data-i18n="l_loc">المكان (مثال: US, NY, New York)</label><input type="text" id="location"></div>
+<div><label for="employment_type" data-i18n="l_emp">نوع التوظيف</label><select id="employment_type"><option value="" data-i18n="emp_none">غير محدد</option><option>Full-time</option><option>Part-time</option><option>Contract</option><option>Temporary</option><option>Other</option></select></div></div>
+<label for="company_profile" data-i18n="l_prof">عن الشركة</label><textarea id="company_profile"></textarea>
+<label for="description" data-i18n="l_desc">وصف الوظيفة (مطلوب)</label><textarea id="description"></textarea>
+<label for="requirements" data-i18n="l_req">المتطلبات</label><textarea id="requirements"></textarea>
+<label for="benefits" data-i18n="l_ben">المزايا</label><textarea id="benefits"></textarea>
+<div class="checks"><label><input type="checkbox" id="has_company_logo"> <span data-i18n="c_logo">الإعلان فيه لوجو للشركة</span></label><label><input type="checkbox" id="telecommuting"> <span data-i18n="c_remote">شغل عن بُعد</span></label><label><input type="checkbox" id="has_questions"> <span data-i18n="c_q">فيه أسئلة تقديم</span></label></div>
+<button class="go" id="run" data-i18n="btn_run">🛡️ افحص الإعلان</button><div class="err" id="err" role="alert"></div></div>
+<div class="card res" id="result" aria-live="polite"><div class="top"><div id="gc"></div><div><div class="verdict" id="verdict"></div><div class="mut" id="meta"></div></div></div>
+<h3 data-i18n="h_flags">🚩 العلامات الحمراء</h3><div id="flags"></div><div id="types"></div>
+<div class="cols"><div><h3 data-i18n="h_up">كلمات رفعت الشك</h3><div id="up"></div></div><div><h3 data-i18n="h_down">كلمات خفّضته</h3><div id="down"></div></div></div>
+<div class="fb"><b data-i18n="fb_q">الحكم ده غلط؟</b> <span class="mut" data-i18n="fb_hint">قولنا الصح وهنسجّله لتحسين الموديل:</span><br><button data-fb="fake" data-i18n="fb_fake">🚨 ده فعلاً نصب</button><button data-fb="real" data-i18n="fb_real">✅ ده إعلان سليم</button><div id="fbmsg" class="mut" style="margin-top:8px"></div></div></div></section>
+
+<section id="sim"><div class="card"><h2 data-i18n="sim_h">🧪 محاكي «ماذا لو»</h2><p class="mut" data-i18n="sim_p">غيّر العناصر الشكلية والنص ثابت، وشوف الموديل بيغيّر رأيه إزاي لحظيًا. هنا بتتكشف نقطة ضعفه.</p>
+<label for="wtitle" data-i18n="l_wtitle">المسمى الوظيفي</label><input type="text" id="wtitle" value="Data Entry Clerk - Work From Home">
+<label for="wdesc" data-i18n="l_wdesc">وصف الوظيفة (إنجليزي)</label><textarea id="wdesc">Earn $5000 per week working only 2 hours a day! No experience needed. We will send you a check to buy equipment, then you transfer the remaining amount to our vendor. Contact us on WhatsApp to start. Registration fee of $50 required.</textarea>
+<div class="checks"><label class="sw"><input type="checkbox" id="w_logo"><i></i><span data-i18n="sw_logo">لوجو الشركة</span></label><label class="sw"><input type="checkbox" id="w_prof"><i></i><span data-i18n="sw_prof">بروفايل الشركة</span></label><label class="sw"><input type="checkbox" id="w_q"><i></i><span data-i18n="sw_q">أسئلة التقديم</span></label></div><div class="err" id="werr"></div></div>
+<div class="card"><div class="top"><div id="gw"></div><div><div class="mut" data-i18n="w_model">رأي الموديل لوحده (قبل القواعد)</div><div class="verdict" id="wverdict"></div><div class="mut" data-i18n="w_final">الحكم النهائي بعد القواعد المصرية والعالمية</div></div></div>
+<div id="wflags" style="margin-top:10px"></div><h3 data-i18n="w_flip">لو قلبت كل خانة لوحدها:</h3><div id="wbars"></div><div class="insight" id="winsight" style="display:none"></div></div></section>
+
+<section id="csv"><div class="card"><h2 data-i18n="csv_h">فحص إعلانات كتير مرة واحدة</h2><p class="mut" data-i18n="csv_p">ارفع ملف CSV فيه عمود <code>description</code>. اختياري: title, company_profile, requirements, benefits, location, has_company_logo (0/1). لحد 2000 صف.</p>
+<input type="file" id="file" accept=".csv"><br><button class="go" id="runcsv" data-i18n="csv_btn">ارفع واحسب</button><div class="err" id="err2" role="alert"></div></div>
+<div class="card res" id="csvres"><div id="csum"></div><button class="go" id="dl" data-i18n="dl_btn">⬇️ نزّل النتائج CSV</button><div style="overflow-x:auto"><table id="ctab"></table></div></div></section>
+
+<section id="how"><div class="card" data-i18n="how"><h2>إزاي بيشتغل</h2>
+<p>JobGuard بيستخدم تعلّم آلة كلاسيكي بدون أي خدمة ذكاء اصطناعي خارجية. نص الإعلان بيتحوّل لأوزان كلمات (TF-IDF) ويتجمع مع تفاصيل زي غياب بروفايل الشركة واللوجو وبيانات التواصل، وموديل Logistic Regression بيدّي درجة، وعتبة مضبوطة على بيانات التدريب بتحوّلها لحكم.</p>
+<h3>حكم هجين: موديل + قواعد</h3><p>فوق الموديل في طبقة قواعد بتكتشف علامات حمراء، منها قواعد مصرية: فودافون كاش وانستاباي، سفر للخليج ورسوم التأشيرة، عمولة مقدمة، وتحويل فلوس قبل التعيين. ولأن الموديل متدرّب على بيانات أمريكية، القواعد دي بتسدّ ثغرة حقيقية في السوق عندنا. وبنحدد <b>نوع النصب</b> (رسوم مقدمة، شيك مزيف، إعادة شحن، سرقة بيانات...) مع خطوات «اعمل إيه دلوقتي».</p>
+<h3>قابل للتحسين</h3><p>زرار «الحكم ده غلط؟» بيخزّن الإعلان بالتصنيف الصح في <code>data/feedback.jsonl</code>، ومعاه سكريبت <code>export_feedback.py</code> يحوّله لملف تدريب لإعادة تدريب الموديل.</p>
+<h3>البيانات والنتائج</h3><p>اتدرّب على EMSCAD (17,880 إعلان، حوالي 5% مزيف). اتشال التكرار واتفصلت الإعلانات المتشابهة بين التدريب والاختبار. نتائج مجموعة الاختبار:</p>
+<table><tr><th>المقياس</th><th>القيمة</th></tr><tr><td>Precision (fake)</td><td>0.817</td></tr><tr><td>Recall (fake)</td><td>0.678</td></tr><tr><td>F1 (fake)</td><td>0.741</td></tr><tr><td>PR-AUC</td><td>0.778</td></tr><tr><td>ROC-AUC</td><td>0.946</td></tr></table>
+<h3>حدود الموديل</h3><ul><li>بيقرأ إنجليزي بس، وبياناته أقدم من أساليب النصب الحالية، فالعربي بيتحكم فيه القواعد.</li><li>الموديل بيعتمد بشدة على اللوجو وبروفايل الشركة وأسئلة التقديم (جرّبها في المحاكي).</li><li>على حملات وشركات جديدة، PR-AUC بينزل لحوالي 0.53.</li><li>القواعد تلميحات مش مخرجات موديل. أي حكم تحذير مش دليل.</li></ul></div></section>
+
+<section id="tips"><div class="card" data-i18n="tips"><h2>علامات نصب الوظائف</h2><ul><li>بيطلبوا فلوس: رسوم تسجيل أو تدريب أو تأمين أو عمولة مقدمة أو رسوم تأشيرة.</li><li>الدفع على فودافون كاش أو انستاباي قبل التعيين.</li><li>التواصل بإيميل شخصي أو واتساب/تليجرام مش بدومين الشركة.</li><li>مرتب كبير جدًا لشغل من غير خبرة، أو تعيين بدون مقابلة أو استعجال.</li><li>الشركة من غير بروفايل أو موقع أو لوجو تقدر تتأكد منه.</li><li>بيطلبوا تصرف شيك، أو تحويل فلوس، أو صورة البطاقة والباسبور وبيانات البنك بدري.</li></ul></div></section>
+</main>
+<script>
+const $=id=>document.getElementById(id),h=(t,c,x)=>{const e=document.createElement(t);if(c)e.className=c;if(x!=null)e.textContent=x;return e};
+/* ---------- i18n ---------- */
+const LK="jg_lang";let L="ar";try{const s=localStorage.getItem(LK);if(s==="en"||s==="ar")L=s}catch(e){}
+const AR={},EN={
+title:"JobGuard – Fake Job Ad Detector",
+hdr_sub:"Paste a job ad and the radar tells you whether it's a scam, what kind of scam, and what to do now.",
+t_scan:"🔍 Check an ad",t_sim:"🧪 “What-if” simulator",t_csv:"📂 Check a CSV file",t_how:"⚙️ How it works",t_tips:"🚩 Scam signs",
+ex_scam:"🚨 Scam example (English)",ex_eg:"🇪🇬 Egyptian scam example",ex_real:"✅ Legitimate example",
+l_title:"Job title",l_loc:"Location (e.g. US, NY, New York)",l_emp:"Employment type",emp_none:"Not specified",
+l_prof:"About the company",l_desc:"Job description (required)",l_req:"Requirements",l_ben:"Benefits",
+c_logo:"The ad has a company logo",c_remote:"Remote work",c_q:"Has application questions",
+btn_run:"🛡️ Scan the ad",h_flags:"🚩 Red flags",h_up:"Words that raised suspicion",h_down:"Words that lowered it",
+fb_q:"Is this verdict wrong?",fb_hint:"Tell us the right answer and we'll log it to improve the model:",
+fb_fake:"🚨 This is a scam",fb_real:"✅ This ad is legitimate",
+sim_h:"🧪 “What-if” simulator",
+sim_p:"Change the cosmetic elements while the text stays the same, and watch the model change its mind live. This is where its weak point shows.",
+l_wtitle:"Job title",l_wdesc:"Job description (English)",sw_logo:"Company logo",sw_prof:"Company profile",sw_q:"Screening questions",
+w_model:"Model's opinion alone (before the rules)",w_final:"Final verdict after the Egyptian and global rules",w_flip:"If you flip each switch on its own:",
+csv_h:"Check many ads at once",
+csv_p:"Upload a CSV file with a <code>description</code> column. Optional: title, company_profile, requirements, benefits, location, has_company_logo (0/1). Up to 2000 rows.",
+csv_btn:"Upload and calculate",dl_btn:"⬇️ Download results CSV",g_prob:"Probability it's a scam",
+how:`<h2>How it works</h2>
+<p>JobGuard uses classic machine learning with no external AI service. The ad text is turned into word weights (TF-IDF) and combined with details such as a missing company profile or logo and contact info. A Logistic Regression model produces a score, and a threshold tuned on the training data turns it into a verdict.</p>
+<h3>Hybrid verdict: model + rules</h3><p>On top of the model sits a rule layer that detects red flags, including Egypt-specific ones: Vodafone Cash and InstaPay, Gulf travel and visa fees, upfront commission, and sending money before being hired. Because the model was trained on US data, these rules close a real gap in our market. It also identifies the <b>scam type</b> (upfront fee, fake check, reshipping, data theft...) with “what to do now” steps.</p>
+<h3>Improvable</h3><p>The “Is this verdict wrong?” button stores the ad with the correct label in <code>data/feedback.jsonl</code>, and the bundled script <code>export_feedback.py</code> turns it into a training file for retraining the model.</p>
+<h3>Data and results</h3><p>Trained on EMSCAD (17,880 ads, about 5% fake). Duplicates were removed and similar ads were kept apart between the training and test sets. Test-set results:</p>
+<table><tr><th>Metric</th><th>Value</th></tr><tr><td>Precision (fake)</td><td>0.817</td></tr><tr><td>Recall (fake)</td><td>0.678</td></tr><tr><td>F1 (fake)</td><td>0.741</td></tr><tr><td>PR-AUC</td><td>0.778</td></tr><tr><td>ROC-AUC</td><td>0.946</td></tr></table>
+<h3>Model limits</h3><ul><li>It reads English only, and its data predates current scam tactics, so Arabic ads are decided by the rules.</li><li>The model relies heavily on the logo, the company profile and the screening questions (try it in the simulator).</li><li>On new campaigns and new companies, PR-AUC drops to about 0.53.</li><li>Rules are hints, not model outputs. A warning verdict is not proof.</li></ul>`,
+tips:`<h2>Signs of a job scam</h2><ul><li>They ask for money: registration, training, deposit, upfront commission or visa fees.</li><li>Payment via Vodafone Cash or InstaPay before being hired.</li><li>Contact through a personal email or WhatsApp/Telegram instead of a company domain.</li><li>Very high pay for work with no experience, hiring without an interview, or pressure to hurry.</li><li>A company with no profile, website or logo you can verify.</li><li>They ask you to cash a check, transfer money, or send your ID card, passport and bank details early.</li></ul>`,
+/* dynamic */
+busy:"📡 Radar scanning...",none:"None",
+v_SUSPICIOUS:"🚨 Likely a scam",v_CAUTION:"⚠️ Be careful: warning signs found",v_LIKELY_REAL:"✅ Looks like a legitimate ad",v_UNSUPPORTED_LANGUAGE:"🌐 Can't judge: the model reads English only",
+meta:"Model score {s} (threshold {t})",type_h:"🎯 Scam type: ",todo:"What to do now:",
+fb_ok:"✅ Correction saved. Total corrections: {n}. It will be used to retrain the model.",
+w_verdict:"{p}% → Verdict: {v}",sim_if:"If you {v} {n} → {p}% ({d})",sim_rm:"remove",sim_add:"add",
+wn_has_company_logo:"the logo",wn_has_profile:"the company profile",wn_has_questions:"the screening questions",
+ins1:"⚠️ Model weak point: the same text with all three elements (logo + profile + questions) drops to {A}%, and without them it is {O}%. The model trusts the look more than the content, which is why the rule layer exists: it catches the text even when the look is convincing.",
+ins2:"Difference between having all three elements and none: {A}% vs {O}%. Try a scam text and see how the model gets fooled by appearance.",
+vn_SUSPICIOUS:"Scam",vn_LIKELY_REAL:"Legit",vn_CAUTION:"Caution",vn_UNSUPPORTED_LANGUAGE:"Unsupported language",
+csv_sum:"Scanned {n} ads: ",sep:", ",fsep:"; ",th_n:"#",th_title:"Title",th_verdict:"Verdict",th_prob:"Scam probability",th_flags:"Red flags",
+e_net:"Can't reach the server.",e_upfail:"Upload failed.",e_pickfile:"Choose a CSV file first.",
+e_rate:"Too many requests. Wait a minute and try again.",e_desc:"Paste the job description (at least a few sentences).",e_short:"Enter the job description (at least 30 characters).",
+e_upload:"Upload a CSV file.",e_read:"Could not read the CSV.",e_col:"The CSV needs at least a 'description' column."
+};
+const ARD={
+title:"JobGuard – كاشف إعلانات الوظائف المزيفة",
+busy:"📡 الرادار بيفحص...",none:"لا يوجد",
+v_SUSPICIOUS:"🚨 نصب على الأغلب",v_CAUTION:"⚠️ خد بالك: فيه علامات تحذير",v_LIKELY_REAL:"✅ شكله إعلان سليم",v_UNSUPPORTED_LANGUAGE:"🌐 مقدرش أحكم: الموديل بيقرأ إنجليزي بس",
+meta:"درجة الموديل {s} (الحد {t})",type_h:"🎯 نوع النصب: ",todo:"اعمل إيه دلوقتي:",
+fb_ok:"✅ اتسجّل التصحيح. إجمالي التصحيحات: {n}. هيتستخدم في إعادة تدريب الموديل.",
+w_verdict:"{p}% → الحكم: {v}",sim_if:"لو {v} {n} → {p}% ({d})",sim_rm:"شلت",sim_add:"ضفت",
+wn_has_company_logo:"اللوجو",wn_has_profile:"بروفايل الشركة",wn_has_questions:"أسئلة التقديم",
+ins1:"⚠️ نقطة ضعف الموديل: نفس النص ده بالعناصر التلاتة (لوجو + بروفايل + أسئلة) بينزل لـ {A}%، ومن غيرهم {O}%. الموديل بيثق في الشكل أكتر من المحتوى، وده سبب وجود طبقة القواعد اللي بتمسك النص حتى لو الشكل مقنع.",
+ins2:"الفرق بين وجود العناصر التلاتة وغيابها: {A}% مقابل {O}%. جرّب نص نصب وشوف الموديل بيتخدع إزاي بالشكل.",
+vn_SUSPICIOUS:"نصب",vn_LIKELY_REAL:"سليم",vn_CAUTION:"تحذير",vn_UNSUPPORTED_LANGUAGE:"لغة غير مدعومة",
+csv_sum:"اتفحص {n} إعلان: ",sep:"، ",fsep:"؛ ",th_n:"#",th_title:"العنوان",th_verdict:"الحكم",th_prob:"احتمال النصب",th_flags:"علامات حمراء",
+e_net:"مفيش اتصال بالسيرفر.",e_upfail:"فشل الرفع.",e_pickfile:"اختار ملف CSV الأول.",
+e_rate:"طلبات كتير. استنى دقيقة وحاول تاني.",e_desc:"الصق وصف الوظيفة (كام جملة على الأقل).",e_short:"اكتب وصف الوظيفة (30 حرف على الأقل).",
+e_upload:"ارفع ملف CSV.",e_read:"مقدرتش أقرا الملف.",e_col:"الملف لازم يكون فيه عمود 'description' على الأقل."
+};
+const SRV={"Too many requests. Wait a minute and try again.":"e_rate","Too many requests.":"e_rate","Paste the job description (at least a few sentences).":"e_desc","Description is too short.":"e_short","Upload a CSV file.":"e_upload","Could not read the CSV.":"e_read","CSV needs at least a 'description' column.":"e_col"};
+const VC={SUSPICIOUS:"bad",CAUTION:"warn","LIKELY REAL":"ok","UNSUPPORTED LANGUAGE":"warn"},vk=v=>v.replace(/ /g,"_");
+const t=(k,o)=>{let s=(L==="en"?EN:AR)[k];if(s==null)s=AR[k]||k;if(o)for(const x in o)s=s.split("{"+x+"}").join(o[x]);return s};
+const pick=(j,k)=>(L==="en"&&j[k+"_en"])||j[k]||[];
+/* ---------- tabs ---------- */
+document.querySelectorAll("nav button").forEach(b=>b.onclick=()=>{document.querySelectorAll("nav button").forEach(x=>x.setAttribute("aria-selected",x===b));document.querySelectorAll("section").forEach(s=>s.classList.toggle("on",s.id===b.dataset.t));if(b.dataset.t==="sim")runW()});
+const G=i=>`<div class="gauge"><svg viewBox="0 0 200 112"><defs><linearGradient id="g${i}" x1="0" x2="1"><stop offset="0" stop-color="#2ef2b0"/><stop offset=".5" stop-color="#ffc83d"/><stop offset="1" stop-color="#ff3d81"/></linearGradient></defs><path class="trk" d="M10 100A90 90 0 0 1 190 100"/><path id="${i}a" class="arc" stroke="url(#g${i})" pathLength="100" d="M10 100A90 90 0 0 1 190 100"/></svg><b id="${i}n">0%</b><small data-i18n="g_prob">احتمال إنه نصب</small></div>`;
+$("gc").innerHTML=G("c");$("gw").innerHTML=G("w");
+/* capture the Arabic default text from the markup, then add the dynamic Arabic strings */
+document.querySelectorAll("[data-i18n]").forEach(e=>{AR[e.dataset.i18n]=e.innerHTML});Object.assign(AR,ARD);
+function setG(i,p){const n=$(i+"n"),from=+n.dataset.v||0;n.dataset.v=p;$(i+"a").style.strokeDashoffset=100-p;const t0=performance.now();(function f(t){const k=Math.min(1,(t-t0)/900);n.textContent=Math.round(from+(p-from)*k)+"%";if(k<1)requestAnimationFrame(f)})(t0)}
+function fill(id,items,cls){const el=$(id);el.replaceChildren();if(!items.length){el.textContent=t("none");el.className="mut";return}el.className="";items.forEach(x=>el.appendChild(h("span","chip "+cls,x)))}
+function types(el,list){el.replaceChildren();list.forEach(x=>{const en=L==="en",d=h("div","type");d.append(h("h4","",t("type_h")+(en?x.name_en:x.name)),h("p","",en?x.about_en:x.about),h("strong","",t("todo")));const u=h("ul");(en?x.advice_en:x.advice).forEach(a=>u.appendChild(h("li","",a)));d.appendChild(u);el.appendChild(d)})}
+/* errors keep their key/raw text so they can be re-drawn when the language changes */
+function drawErr(e){const k=e.dataset.k,raw=e.dataset.raw;e.textContent=k?t(k):raw?(SRV[raw]?t(SRV[raw]):raw):""}
+function setErr(id,k,raw){const e=$(id);e.dataset.k=k||"";e.dataset.raw=raw||"";drawErr(e)}
+/* ---------- check an ad ---------- */
+let last=null,lastRes=null,fbTot=null,fbErr="";
+function drawFb(){$("fbmsg").textContent=fbTot!=null?t("fb_ok",{n:fbTot}):fbErr}
+function renderScan(){const j=lastRes;if(!j)return;
+ $("verdict").textContent=t("v_"+vk(j.verdict));$("verdict").className="verdict "+VC[j.verdict];
+ $("meta").textContent=t("meta",{s:j.score,t:j.threshold});
+ fill("flags",pick(j,"red_flags"),"r");types($("types"),j.types);fill("up",j.raises.map(x=>x.name),"r");fill("down",j.lowers.map(x=>x.name),"g")}
+$("run").onclick=async()=>{setErr("err");const d={};
+ ["title","location","employment_type","company_profile","description","requirements","benefits"].forEach(k=>d[k]=$(k).value);
+ ["has_company_logo","telecommuting","has_questions"].forEach(k=>d[k]=$(k).checked?1:0);
+ $("run").disabled=true;$("run").textContent=t("busy");
+ try{const r=await fetch("/api/predict",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(d)});const j=await r.json();
+  if(!r.ok){setErr("err",null,j.error);return}
+  last={...d,verdict:j.verdict,probability:j.probability};fbTot=null;fbErr="";drawFb();
+  lastRes=j;renderScan();
+  $("result").style.display="block";setG("c",Math.round(j.probability*100));
+  $("result").scrollIntoView({behavior:"smooth"});
+ }catch(e){setErr("err","e_net")}finally{$("run").disabled=false;$("run").textContent=t("btn_run")}};
+document.querySelectorAll("[data-fb]").forEach(b=>b.onclick=async()=>{if(!last)return;
+ const r=await fetch("/api/feedback",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({...last,label:b.dataset.fb})});const j=await r.json();
+ if(r.ok){fbTot=j.total;fbErr=""}else{fbTot=null;fbErr=j.error}drawFb()});
+/* ---------- what-if ---------- */
+let wt,lastW=null;const WI={has_company_logo:"w_logo",has_profile:"w_prof",has_questions:"w_q"};
+["wtitle","wdesc","w_logo","w_prof","w_q"].forEach(i=>$(i).addEventListener("input",()=>{clearTimeout(wt);wt=setTimeout(runW,300)}));
+function renderW(){if(!lastW)return;const{j,d}=lastW,v=VC[j.verdict];
+ $("wverdict").textContent=t("w_verdict",{p:Math.round(j.probability*100),v:t("v_"+vk(j.verdict))});$("wverdict").className="verdict "+v;fill("wflags",pick(j,"red_flags"),"r");
+ const b=$("wbars");b.replaceChildren();Object.entries(j.impact).forEach(([k,p])=>{const on=d[k],pc=Math.round(p*100),now=Math.round(j.probability*100);
+  b.append(h("div","",t("sim_if",{v:t(on?"sim_rm":"sim_add"),n:t("wn_"+k),p:pc,d:(pc>now?"+":"")+(pc-now)})));const bar=h("div","bar"),i=h("i");i.style.width=pc+"%";bar.appendChild(i);b.appendChild(bar)});
+ const A=Math.round(j.all_on*100),O=Math.round(j.all_off*100),I=$("winsight");I.style.display="block";
+ I.textContent=t(j.red_flags.length&&A<=30?"ins1":"ins2",{A,O})}
+async function runW(){const d={title:$("wtitle").value,description:$("wdesc").value,has_company_logo:+$("w_logo").checked,has_profile:+$("w_prof").checked,has_questions:+$("w_q").checked};
+ setErr("werr");try{const r=await fetch("/api/whatif",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(d)});const j=await r.json();
+ if(!r.ok){setErr("werr",null,j.error);return}
+ lastW={j,d};renderW();setG("w",Math.round(j.probability*100))}catch(e){setErr("werr","e_net")}}
+const EX={scam:{title:"Data Entry Clerk - Work From Home",location:"US",description:"Earn $5000 per week working only 2 hours a day! No experience needed. We will send you a check to buy equipment, then you transfer the remaining amount to our vendor. Contact us on WhatsApp to start. Registration fee of $50 required.",requirements:"None, anyone can apply",benefits:"Unlimited income, no interview needed"},
+eg:{title:"مطلوب موظفين للعمل بالخليج",location:"EG",description:"فرصة سفر للسعودية بعقد عمل مضمون ومرتب 15 ألف ريال. بدون خبرة وبدون مقابلة. ادفع رسوم التأشيرة 3000 جنيه على فودافون كاش قبل التعيين وكلمنا واتساب. عدد محدود!",requirements:"صورة البطاقة والباسبور",benefits:"سكن ومواصلات"},
+real:{title:"Senior Software Engineer",location:"US, NY, New York",company_profile:"Acme Technologies is a 15-year-old software company with 400 employees, building payment infrastructure for banks.",description:"We are looking for a Senior Software Engineer to join our payments platform team. You will design and maintain backend services in Java and mentor junior engineers. The interview process includes a technical screen and a team interview.",requirements:"5+ years of Java, BSc in Computer Science",benefits:"Health insurance, 401(k) match, 20 days PTO"}};
+document.querySelectorAll(".ex").forEach(b=>b.onclick=()=>{const e=EX[b.dataset.ex];["title","location","company_profile","description","requirements","benefits"].forEach(k=>$(k).value=e[k]||"");$("has_company_logo").checked=$("has_questions").checked=b.dataset.ex==="real"});
+/* ---------- csv ---------- */
+let lastC=null;
+async function csvPost(dl){const fd=new FormData();fd.append("file",$("file").files[0]);fd.append("lang",L);if(dl)fd.append("download","1");return fetch("/api/batch",{method:"POST",body:fd})}
+function renderCsv(){const j=lastC;if(!j)return;
+ $("csum").textContent=t("csv_sum",{n:j.total})+Object.entries(j.counts).map(([k,v])=>v+" "+t("vn_"+vk(k))).join(t("sep"));
+ const tb=$("ctab");tb.replaceChildren();const hr=tb.insertRow();["th_n","th_title","th_verdict","th_prob","th_flags"].forEach(k=>{const c=document.createElement("th");c.textContent=t(k);hr.appendChild(c)});
+ j.rows.forEach(x=>{const tr=tb.insertRow();[x.n,x.title,t("vn_"+vk(x.verdict)),Math.round(x.probability*100)+"%",pick(x,"flags").join(t("fsep"))||"-"].forEach((v,i)=>{const c=tr.insertCell();c.textContent=v;if(i===2)c.className=x.verdict.split(" ")[0]})})}
+$("runcsv").onclick=async()=>{setErr("err2");if(!$("file").files[0]){setErr("err2","e_pickfile");return}
+ $("runcsv").disabled=true;try{const r=await csvPost(false);const j=await r.json();if(!r.ok){setErr("err2",null,j.error);return}
+  lastC=j;renderCsv();$("csvres").style.display="block"}catch(e){setErr("err2","e_upfail")}finally{$("runcsv").disabled=false}};
+$("dl").onclick=async()=>{const r=await csvPost(true);const a=document.createElement("a");a.href=URL.createObjectURL(await r.blob());a.download="jobguard_results.csv";a.click()};
+/* ---------- language switch ---------- */
+function applyLang(){const D=L==="en"?EN:AR;
+ document.documentElement.lang=L;document.documentElement.dir=L==="en"?"ltr":"rtl";document.title=t("title");
+ document.querySelectorAll("[data-i18n]").forEach(e=>{const v=D[e.dataset.i18n];if(v!=null)e.innerHTML=v});
+ document.querySelectorAll(".lang button").forEach(b=>b.setAttribute("aria-pressed",b.dataset.l===L));
+ ["err","werr","err2"].forEach(i=>drawErr($(i)));drawFb();renderScan();renderW();renderCsv()}
+document.querySelectorAll(".lang button").forEach(b=>b.onclick=()=>{L=b.dataset.l;try{localStorage.setItem(LK,L)}catch(e){}applyLang()});
+applyLang();
+</script></body></html>
